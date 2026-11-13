@@ -1,0 +1,83 @@
+# =============================================================
+# GRILLE PROVISOIRE D'EVALUATION
+# -------------------------------------------------------------
+# Ce fichier sépare la méthodologie du code technique.
+# Pour ajouter, modifier ou retirer un critère, modifie uniquement
+# ce fichier. L'application lira automatiquement la liste.
+#
+# Référentiels de référence :
+# - RoB 2 : risque de biais dans les essais randomisés
+# - CONSORT 2025 : transparence du compte rendu
+# - ICH E9 / E9(R1) : principes statistiques des essais cliniques
+# =============================================================
+
+version: "0.1-provisoire"
+
+resultat_evalue: "Critère de jugement principal"
+
+criteres:
+  - id: randomisation
+    volet: methodologique
+    referentiel: "RoB 2"
+    question: >
+      Comment les participants ont-ils été répartis entre les groupes
+      expérimental et contrôle ? La méthode de randomisation est-elle décrite ?
+
+  - id: aveuglement
+    volet: methodologique
+    referentiel: "RoB 2 / CONSORT"
+    question: >
+      Qui était en aveugle (participants, intervenants, évaluateurs des
+      résultats, analystes) et comment l'aveuglement a-t-il été mis en œuvre ?
+
+  - id: ecarts_interventions
+    volet: methodologique
+    referentiel: "RoB 2"
+    question: >
+      Les participants ont-ils reçu l'intervention prévue ? Comment les écarts,
+      arrêts de traitement ou traitements supplémentaires ont-ils été gérés ?
+
+  - id: donnees_manquantes
+    volet: methodologique_et_statistique
+    referentiel: "RoB 2 / CONSORT / ICH E9"
+    question: >
+      Quels résultats sont manquants, combien de participants sont concernés
+      et comment les données manquantes ont-elles été traitées dans l'analyse ?
+
+  - id: mesure_resultat_principal
+    volet: methodologique
+    referentiel: "RoB 2"
+    question: >
+      Comment le critère de jugement principal a-t-il été mesuré, à quel moment
+      et par qui ? L'outil de mesure est-il décrit ?
+
+  - id: taille_echantillon
+    volet: statistique
+    referentiel: "CONSORT 2025"
+    question: >
+      Comment la taille d'échantillon a-t-elle été déterminée ? Quelles
+      hypothèses ont été utilisées pour le calcul ?
+
+  - id: analyse_principale
+    volet: statistique
+    referentiel: "ICH E9(R1) / CONSORT"
+    question: >
+      Quelle est l'analyse principale ? Quelle population est analysée ?
+      Quel effet est estimé et comment les événements intercurrents sont-ils
+      traités ?
+
+  - id: resultats_precision
+    volet: statistique
+    referentiel: "CONSORT / ICH E9"
+    question: >
+      Quels résultats sont rapportés pour le critère principal ? L'article
+      fournit-il une estimation de l'effet, un intervalle de confiance et,
+      le cas échéant, une valeur p ? Des analyses de sensibilité sont-elles
+      rapportées ?
+
+propositions_autorisees:
+  - "information_rapportee_clairement"
+  - "information_rapportee_partiellement"
+  - "information_ambigue"
+  - "information_non_retrouvee"
+  - "a_verifier_humainement"
