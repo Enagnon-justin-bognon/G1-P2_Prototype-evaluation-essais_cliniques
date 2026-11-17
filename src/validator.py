@@ -33,7 +33,7 @@ def validate_citations(
 ) -> Dict:
     """
     Vérifie que les citations renvoient à des passages réels
-    et enrichit les citations avec le numéro de page source.
+    et enrichit les citations avec le statut de validation et le numéro de page source.
     """
 
     chunks_by_id = {
@@ -52,6 +52,10 @@ def validate_citations(
             quoted_text = citation.get("text", "")
 
             if chunk_id not in chunks_by_id:
+                citation["page"] = None
+                citation["status"] = "citation_introuvable"
+                citation["message"] = "Le passage indiqué n'existe pas."
+
                 validated_citations.append(
                     {
                         "criterion_id": criterion_id,
@@ -68,7 +72,7 @@ def validate_citations(
             source_text = chunk_info.get("text", "")
             page_number = chunk_info.get("page")
 
-            # Enrichir la citation avec la page pour l'interface
+            # Enrichir la citation avec la page
             citation["page"] = page_number
 
             # 1. Vérification exacte directe
@@ -82,6 +86,9 @@ def validate_citations(
                 norm_match = norm_quote in norm_source
 
             if quoted_text and not (exact_match or norm_match):
+                citation["status"] = "citation_non_concordante"
+                citation["message"] = "Le texte cité ne correspond pas au passage."
+
                 validated_citations.append(
                     {
                         "criterion_id": criterion_id,
@@ -93,6 +100,9 @@ def validate_citations(
                     }
                 )
                 continue
+
+            citation["status"] = "citation_valide"
+            citation["message"] = "La citation correspond au passage."
 
             validated_citations.append(
                 {

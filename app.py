@@ -134,6 +134,17 @@ CUSTOM_CSS = """
         margin-bottom: 0.6rem;
     }
 
+    .badge-referentiel {
+        display: inline-block;
+        padding: 0.2rem 0.6rem;
+        border-radius: 6px;
+        font-size: 0.72rem;
+        font-weight: 600;
+        background-color: rgba(148, 163, 184, 0.18);
+        color: inherit;
+        margin-left: 0.5rem;
+    }
+
     .badge-claire {
         background-color: rgba(34, 197, 94, 0.18);
         color: #22c55e;
@@ -231,7 +242,6 @@ def get_status_presentation(raw_status: str) -> dict:
     if status_key in mapping:
         return mapping[status_key]
 
-    # Fallback pour statuts partiels ou imprévus
     if "clairement" in status_key or ("conforme" in status_key and "non" not in status_key):
         return mapping["information_rapportee_clairement"]
     if "partielle" in status_key:
@@ -280,6 +290,20 @@ with st.sidebar:
 
     st.divider()
 
+    st.markdown("### ⚙️ Modèle d'analyse")
+    default_env_model = os.getenv("GEMINI_MODEL", "gemini-3.8-flash")
+    available_models = ["gemini-3.8-flash", "gemini-2.5-pro", "gemini-2.5-flash"]
+    selected_index = available_models.index(default_env_model) if default_env_model in available_models else 0
+
+    selected_model = st.selectbox(
+        "Modèle Gemini :",
+        options=available_models,
+        index=selected_index,
+        help="gemini-3.8-flash est recommandé (rapide, ~5-10s). gemini-2.5-pro offre une analyse plus approfondie pour les designs complexes.",
+    )
+
+    st.divider()
+
     st.markdown("### 📌 Comment l'utiliser")
     st.markdown(
         """
@@ -289,11 +313,6 @@ with st.sidebar:
         4. Téléchargez le rapport JSON ou CSV.  
         """
     )
-
-    st.divider()
-
-    model_display = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
-    st.caption(f"🤖 Modèle configuré : `{model_display}`")
 
     st.divider()
 
@@ -359,7 +378,6 @@ uploaded_file = st.file_uploader(
 )
 
 if uploaded_file is None:
-    # Réinitialisation si l'utilisateur retire le fichier
     if st.session_state.analyzed_file_name is not None:
         st.session_state.analysis = None
         st.session_state.chunks = []
@@ -395,7 +413,6 @@ if st.button("🚀 Analyser l'article", type="primary", use_container_width=True
                 text=f"Extraction : page {current_page} sur {total_pages}",
             )
 
-        # Utilisation de TemporaryDirectory pour garantir la suppression automatique des fichiers temporaires
         with tempfile.TemporaryDirectory() as temp_dir:
             temp_pdf_path = os.path.join(temp_dir, uploaded_file.name)
             with open(temp_pdf_path, "wb") as temp_file:
@@ -421,7 +438,7 @@ if st.button("🚀 Analyser l'article", type="primary", use_container_width=True
             st.error("Aucun passage exploitable n'a pu être extrait du PDF.")
             st.stop()
 
-        st.write("Analyse méthodologique et statistique avec Gemini…")
+        st.write(f"Analyse méthodologique et statistique avec {selected_model}…")
 
         def update_gemini_progress(message: str):
             st.write(message)
@@ -431,6 +448,7 @@ if st.button("🚀 Analyser l'article", type="primary", use_container_width=True
         analysis = analyze_article(
             chunks=chunks,
             grille=grille,
+            model_override=selected_model,
             progress_callback=update_gemini_progress,
         )
 
@@ -447,7 +465,6 @@ if st.button("🚀 Analyser l'article", type="primary", use_container_width=True
         json_path = save_analysis(analysis)
         csv_path = export_analysis_to_csv(analysis)
 
-        # Enregistrement dans st.session_state
         st.session_state.analysis = analysis
         st.session_state.chunks = chunks
         st.session_state.json_path = json_path
@@ -457,7 +474,7 @@ if st.button("🚀 Analyser l'article", type="primary", use_container_width=True
         status.update(label="Analyse terminée avec succès.", state="complete")
 
 
-# Affichage persistant des résultats (indépendant des ré-exécutions lors du clic sur les boutons d'export)
+# Affichage persistant des résultats
 if st.session_state.analysis is not None:
     analysis = st.session_state.analysis
     chunks = st.session_state.chunks
@@ -492,7 +509,7 @@ if st.session_state.analysis is not None:
         )
         total_citations = len(analysis.get("citations_validees", []))
         st.metric(
-            label="Citations vérifiées",
+            label="Citations certifiées",
             value=f"{citations_valides}/{total_citations}",
         )
 
@@ -501,12 +518,14 @@ if st.session_state.analysis is not None:
     for criterion in analysis.get("criteria", []):
         raw_status = criterion.get("status", "")
         pres = get_status_presentation(raw_status)
+        referentiel = criterion.get("referentiel", "")
+        badge_ref_html = f"<span class='badge-referentiel'>{referentiel}</span>" if referentiel else ""
 
         st.markdown(
             f"""
             <div class="result-card {pres['css_class']}">
                 <div class="step-title">
-                    {pres['icon']} {criterion.get('label', criterion.get('id', 'Critère'))}
+                    {pres['icon']} {criterion.get('label', criterion.get('id', 'Critère'))} {badge_ref_html}
                 </div>
                 <span class="badge {pres['badge_class']}">
                     {pres['label']}
@@ -526,10 +545,19 @@ if st.session_state.analysis is not None:
                 for citation in citations:
                     page_info = citation.get('page')
                     page_str = f"Page {page_info}" if page_info else "Page non spécifiée"
+                    cite_status = citation.get("status", "")
+
+                    if cite_status == "citation_valide":
+                        cite_badge = "<span style='color: #22c55e; font-weight: 700;'>🟢 Citation vérifiée dans le texte</span>"
+                    elif cite_status == "citation_non_concordante":
+                        cite_badge = "<span style='color: #ef4444; font-weight: 700;'>🔴 Citation non concordante</span>"
+                    else:
+                        cite_badge = "<span style='color: #94a3b8; font-weight: 700;'>⚪ Passage non localisé</span>"
+
                     st.markdown(
                         f"""
                         <div class="citation-box">
-                            <strong>Passage :</strong> {citation.get('chunk_id', 'Inconnu')} &nbsp;|&nbsp; <strong>{page_str}</strong><br>
+                            <strong>Passage :</strong> {citation.get('chunk_id', 'Inconnu')} &nbsp;|&nbsp; <strong>{page_str}</strong> &nbsp;|&nbsp; {cite_badge}<br>
                             <strong>Extrait cité :</strong><br>
                             <em>« {citation.get('text', '')} »</em>
                         </div>

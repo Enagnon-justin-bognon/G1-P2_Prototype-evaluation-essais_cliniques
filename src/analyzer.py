@@ -63,7 +63,7 @@ def analyze_article(
     model_name = (
         model_override
         or os.getenv("GEMINI_MODEL")
-        or "gemini-2.5-flash"
+        or "gemini-3.8-flash"
     ).strip()
 
     client = genai.Client(api_key=api_key)
@@ -87,9 +87,11 @@ def analyze_article(
         )
         return None
 
+    criteria_map = {criterion.get("id"): criterion for criterion in criteria}
+
     criteria_text = "\n".join(
-        f"- {criterion.get('id', '')} ({criterion.get('referentiel', '')}) : "
-        f"{criterion.get('question', criterion.get('label', ''))}"
+        f"- {criterion.get('id', '')} | {criterion.get('label', '')} ({criterion.get('referentiel', '')}) :\n"
+        f"  Question : {criterion.get('question', '')}"
         for criterion in criteria
     )
 
@@ -183,7 +185,7 @@ Texte intégral à analyser :
             if "model" in error_message.lower() and "not found" in error_message.lower():
                 report_error(
                     f"Le modèle '{model_name}' n'est pas disponible ou introuvable "
-                    "pour cette clé API. Essayez de définir GEMINI_MODEL=gemini-2.5-flash ou gemini-2.0-flash dans .env."
+                    "pour cette clé API. Essayez de définir GEMINI_MODEL=gemini-3.8-flash ou gemini-2.5-flash dans .env."
                 )
                 return None
 
@@ -230,6 +232,17 @@ Texte intégral à analyser :
     if not isinstance(analysis, dict) or not analysis.get("criteria"):
         report_error("La réponse de Gemini n'a pas la structure attendue ou ne contient aucun critère.")
         return None
+
+    # Harmoniser les libellés et métadonnées à partir de la grille officielle
+    for item in analysis.get("criteria", []):
+        cid = item.get("id")
+        if cid in criteria_map:
+            official = criteria_map[cid]
+            # Si le label renvoyé est absent ou égal à l'id brut, injecter le libellé officiel
+            if not item.get("label") or item.get("label") == cid:
+                item["label"] = official.get("label", cid)
+            item["referentiel"] = official.get("referentiel", "")
+            item["volet"] = official.get("volet", "")
 
     analysis["model_used"] = model_name
     analysis["chunks_analyzed"] = len(chunks_to_send)

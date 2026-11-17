@@ -1,36 +1,39 @@
 # =============================================================
-# GRILLE PROVISOIRE D'EVALUATION
+# GRILLE D'EVALUATION METHODOLOGIQUE ET STATISTIQUE
 # -------------------------------------------------------------
 # Ce fichier sépare la méthodologie du code technique.
-# Pour ajouter, modifier ou retirer un critère, modifie uniquement
-# ce fichier. L'application lira automatiquement la liste.
+# Pour ajouter, modifier ou retirer un critère, modifiez ce fichier.
 #
 # Référentiels de référence :
-# - RoB 2 : risque de biais dans les essais randomisés
-# - CONSORT 2025 : transparence du compte rendu
-# - ICH E9 / E9(R1) : principes statistiques des essais cliniques
+# - RoB 2 : risque de biais dans les essais randomisés (Cochrane)
+# - CONSORT 2025 : transparence et complétude du compte rendu
+# - ICH E9 / E9(R1) : principes statistiques, estimands et événements intercurrents
 # =============================================================
 
-version: "0.1-provisoire"
+version: "1.0"
 
 resultat_evalue: "Critère de jugement principal"
 
 criteres:
   - id: randomisation
+    label: "Randomisation et dissimulation de l'allocation"
     volet: methodologique
     referentiel: "RoB 2"
     question: >
       Comment les participants ont-ils été répartis entre les groupes
-      expérimental et contrôle ? La méthode de randomisation est-elle décrite ?
+      expérimental et contrôle ? La méthode de randomisation et la dissimulation
+      de l'allocation sont-elles décrites ?
 
   - id: aveuglement
+    label: "Aveuglement (Insu)"
     volet: methodologique
     referentiel: "RoB 2 / CONSORT"
     question: >
-      Qui était en aveugle (participants, intervenants, évaluateurs des
+      Qui était en aveugle (participants, soignants/intervenants, évaluateurs des
       résultats, analystes) et comment l'aveuglement a-t-il été mis en œuvre ?
 
   - id: ecarts_interventions
+    label: "Écarts aux interventions prévues"
     volet: methodologique
     referentiel: "RoB 2"
     question: >
@@ -38,40 +41,47 @@ criteres:
       arrêts de traitement ou traitements supplémentaires ont-ils été gérés ?
 
   - id: donnees_manquantes
+    label: "Données manquantes et perdus de vue"
     volet: methodologique_et_statistique
     referentiel: "RoB 2 / CONSORT / ICH E9"
     question: >
-      Quels résultats sont manquants, combien de participants sont concernés
-      et comment les données manquantes ont-elles été traitées dans l'analyse ?
+      Quels résultats sont manquants pour le critère principal, combien de
+      participants sont concernés et comment les données manquantes ont-elles été
+      traitées dans l'analyse ?
 
   - id: mesure_resultat_principal
+    label: "Mesure du critère de jugement principal"
     volet: methodologique
     referentiel: "RoB 2"
     question: >
       Comment le critère de jugement principal a-t-il été mesuré, à quel moment
-      et par qui ? L'outil de mesure est-il décrit ?
+      et par qui ? L'outil de mesure est-il validé et bien décrit ?
 
   - id: taille_echantillon
+    label: "Taille de l'échantillon et puissance"
     volet: statistique
     referentiel: "CONSORT 2025"
     question: >
       Comment la taille d'échantillon a-t-elle été déterminée ? Quelles
-      hypothèses ont été utilisées pour le calcul ?
+      hypothèses (taille d'effet attendue, risque alpha, puissance) ont été
+      utilisées pour le calcul ?
 
   - id: analyse_principale
+    label: "Analyse principale et population (ITT, estimand)"
     volet: statistique
     referentiel: "ICH E9(R1) / CONSORT"
     question: >
-      Quelle est l'analyse principale ? Quelle population est analysée ?
-      Quel effet est estimé et comment les événements intercurrents sont-ils
-      traités ?
+      Quelle est l'analyse principale ? Quelle population est analysée (ITT,
+      ITT modifiée, per protocole) ? Quel effet est estimé et comment les
+      événements intercurrents sont-ils traités ?
 
   - id: resultats_precision
+    label: "Résultats, précision de l'effet et sensibilité"
     volet: statistique
     referentiel: "CONSORT / ICH E9"
     question: >
       Quels résultats sont rapportés pour le critère principal ? L'article
-      fournit-il une estimation de l'effet, un intervalle de confiance et,
+      fournit-il une estimation de l'effet, un intervalle de confiance à 95 % et,
       le cas échéant, une valeur p ? Des analyses de sensibilité sont-elles
       rapportées ?
 
