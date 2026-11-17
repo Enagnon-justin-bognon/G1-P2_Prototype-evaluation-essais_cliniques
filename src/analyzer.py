@@ -103,15 +103,19 @@ Ta mission :
 {criteria_text}
 
 Règles strictes :
-1. Base toutes tes affirmations UNIQUEMENT sur le texte fourni. Ne jamais inventer ou supposer d'information non écrite.
-2. Pour chaque critère, cite le ou les extraits textuels exacts prouvant ton évaluation, avec leur identifiant de passage (chunk_id).
-3. Le champ "status" doit être OBLIGATOIREMENT choisi parmi les 5 valeurs exactes suivantes :
+1. Gestion des langues :
+   - Les articles scientifiques sont majoritairement rédigés en anglais (parfois en français).
+   - Rédige TOUJOURS tes explications, résumés et justifications en français.
+   - En revanche, conserve STRICTEMENT les extraits cités ("citations.text") dans leur langue originale (anglais), mot pour mot, sans JAMAIS les traduire, afin de permettre la validation automatique par confrontation textuelle.
+2. Base toutes tes affirmations UNIQUEMENT sur le texte fourni. Ne jamais inventer ou supposer d'information non écrite.
+3. Pour chaque critère, cite le ou les extraits textuels exacts prouvant ton évaluation, avec leur identifiant de passage (chunk_id).
+4. Le champ "status" doit être OBLIGATOIREMENT choisi parmi les 5 valeurs exactes suivantes :
    - "information_rapportee_clairement" : si l'information requise est explicitement et complètement décrite.
    - "information_rapportee_partiellement" : si l'information est mentionnée mais incomplète.
    - "information_ambigue" : si les éléments rapportés sont contradictoires ou imprécis.
    - "information_non_retrouvee" : si le texte ne mentionne pas cet élément.
    - "a_verifier_humainement" : si une interprétation humaine complexe ou un doute méthodologique subsiste.
-4. Si une vérification humaine est conseillée, active "human_check_needed": true.
+5. Si une vérification humaine est conseillée, active "human_check_needed": true.
 
 Format de sortie attendu (JSON pur uniquement) :
 {{

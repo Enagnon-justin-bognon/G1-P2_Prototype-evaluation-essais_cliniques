@@ -85,6 +85,11 @@ Dans le domaine médical, l'exactitude des preuves est primordiale. Chaque citat
 * 🔴 **Citation non concordante** : Le modèle a tronqué ou reformulé le texte de manière non conforme.
 * ⚪ **Passage non localisé** : L'identifiant du passage n'existe pas.
 
+### 🌐 Prise en charge des articles en anglais :
+Plus de 95 % des essais cliniques publiés étant rédigés en anglais, le système gère nativement ce fonctionnement bilingue :
+* **Restitution en français** : Les synthèses et justifications sont rédigées en français pour le lecteur.
+* **Citations en version originale (anglais)** : Les extraits cités sont strictement conservés mot à mot en anglais sans traduction, permettant au validateur de certifier la présence réelle du passage dans le document.
+
 ---
 
 ## 📁 Structure du dépôt
