@@ -1,7 +1,8 @@
-
 prototype-evaluation-essais/
 .env
 .venv/
-
 .streamlit/secrets.toml
 __pycache__/
+*.pyc
+.pytest_cache/
+results/
