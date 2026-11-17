@@ -291,15 +291,20 @@ with st.sidebar:
     st.divider()
 
     st.markdown("### ⚙️ Modèle d'analyse")
-    default_env_model = os.getenv("GEMINI_MODEL", "gemini-3.8-flash")
-    available_models = ["gemini-3.8-flash", "gemini-2.5-pro", "gemini-2.5-flash"]
+    default_env_model = os.getenv("GEMINI_MODEL", "gemini-3.5-flash")
+    available_models = [
+        "gemini-3.5-flash",
+        "gemini-3.6-flash",
+        "gemini-3.8-flash",
+        "gemini-3.5-flash-lite",
+    ]
     selected_index = available_models.index(default_env_model) if default_env_model in available_models else 0
 
     selected_model = st.selectbox(
         "Modèle Gemini :",
         options=available_models,
         index=selected_index,
-        help="gemini-3.8-flash est recommandé (rapide, ~5-10s). gemini-2.5-pro offre une analyse plus approfondie pour les designs complexes.",
+        help="gemini-3.5-flash et gemini-3.6-flash sont très performants et bénéficient de quotas séparés.",
     )
 
     st.divider()

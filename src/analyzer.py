@@ -63,7 +63,7 @@ def analyze_article(
     model_name = (
         model_override
         or os.getenv("GEMINI_MODEL")
-        or "gemini-3.8-flash"
+        or "gemini-3.5-flash"
     ).strip()
 
     client = genai.Client(api_key=api_key)

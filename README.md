@@ -147,7 +147,7 @@ pip install -r requirements.txt
 Créez un fichier `.env` à la racine du projet (copiez `.env.example`) :
 ```env
 GEMINI_API_KEY=votre_cle_api_secrete
-GEMINI_MODEL=gemini-3.8-flash
+GEMINI_MODEL=gemini-3.5-flash
 ```
 
 ### 6. Lancer l'application
